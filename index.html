@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Letter → Unicode</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        body {
+            background: #222222;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .card {
+            background: #123456;
+            max-width: 700px;
+            width: 100%;
+            padding: 30px 25px;
+            border-radius: 20px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+            transition: 0.2s;
+        }
+        h1 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 0.25rem;
+            color: #6f7e8f;
+        }
+        .sub {
+            font-size: 0.95rem;
+            color: #6f7e8f;
+            margin-bottom: 1.8rem;
+            border-left: 4px solid #818cf8;
+            padding-left: 14px;
+        }
+        label {
+            font-weight: 500;
+            color: #6f7e8f;
+            display: block;
+            margin-bottom: 6px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 1.1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: #f8fafc;
+            transition: 0.2s;
+            outline: none;
+            font-family: inherit;
+        }
+        input:focus, textarea:focus {
+            border-color: #818cf8;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.15);
+        }
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .output-box {
+            margin-top: 20px;
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 16px 18px;
+            border: 2px solid #e2e8f0;
+            word-break: break-all;
+            font-size: 1.5rem;
+            line-height: 2.2rem;
+            letter-spacing: 2px;
+            min-height: 60px;
+            font-family: 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', system-ui, sans-serif;
+            color: #0f172a;
+            transition: 0.2s;
+        }
+        .output-box:empty::before {
+            content: "↳ Θ∪†ρ∪† ɠ∅ϵϞ ɦϵʀϵ";
+            color: #94a3b8;
+            font-size: 1rem;
+            letter-spacing: normal;
+        }
+        .hint {
+            margin-top: 12px;
+            font-size: 0.9rem;
+            color: #475569;
+            background: #f1f5f9;
+            padding: 12px 16px;
+            border-radius: 10px;
+        }
+        .hint code {
+            background: #e2e8f0;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+        .mapping-preview {
+            margin-top: 16px;
+            font-size: 0.9rem;
+            color: #334155;
+            background: #f8fafc;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 16px;
+        }
+        .mapping-preview span {
+            background: white;
+            padding: 2px 10px;
+            border-radius: 20px;
+            border: 1px solid #d1d5db;
+        }
+        .mapping-preview strong {
+            font-weight: 600;
+        }
+        hr {
+            border: none;
+            border-top: 2px dashed #e2e8f0;
+            margin: 20px 0 14px 0;
+        }
+        .edit-hint {
+            font-size: 0.85rem;
+            color: #64748b;
+            background: #fef9c3;
+            padding: 8px 14px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>⨿ͷⅰͼ∅ⅾϵ ϻαρρⅰͷɠ</h1>
+    <div class="sub">
+        Every letter outputs an Unicode Character<br>
+    </div>
+
+    <label for="inputText">Ⅰͷρ∪†</label>
+    <input type="text" id="inputText" placeholder="e.g. Subscribe to CodeTimmy" autofocus>
+
+    <label for="outputArea" style="margin-top: 18px;">Θ∪†ρ∪†</label>
+    <div id="outputArea" class="output-box"></div>
+
+    <div class="hint">
+        ⚡ The output is <strong>live</strong> for each input.
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ─── HIER DEFINIERST DU DEINE MAPPINGS ──────────────────────────────
+        // Jeder Eintrag: 'Buchstabe' : 'Unicode-Zeichen'
+        // case-sensitiv! 'A' ≠ 'a'
+        const mapping = {
+            'A': '⋀',
+            'a': 'α',
+            'B': 'ʙ',
+            'b': 'ʙ',
+            'C': 'Ͼ',
+            'c': 'ͼ',
+            'D': 'Ͻ',
+            'd': 'ⅾ',
+            'E': 'Σ',
+            'e': 'ϵ',
+            'F': 'Ϝ',
+            'f': 'ϝ',
+            'G': '₲',
+            'g': 'ɠ',
+            'H': 'Ħ',
+            'h': 'ɦ',
+            'I': 'Ⅰ',
+            'i': 'ⅰ',
+            'J': 'ɟ',
+            'j': 'ʝ',
+            'K': 'Ϗ',
+            'k': 'κ',
+            'L': '∟',
+            'l': 'ι',
+            'M': 'ϻ',
+            'm': '⩋',
+            'N': 'Π',
+            'n': 'ͷ',
+            'O': 'Θ',
+            'o': '∅',
+            'P': '₽',
+            'p': 'ρ',
+            'Q': 'Ϙ',
+            'q': 'ϙ',
+            'R': '®',
+            'r': 'ʀ',
+            'S': '$',
+            's': 'Ϟ',
+            'T': 'ͳ',
+            't': '†',
+            'U': '⨿',
+            'u': '∪',
+            'V': '⋁',
+            'v': 'ⅴ',
+            'W': '⩖',
+            'w': '⩊',
+            'X': 'Ⅹ',
+            'x': 'ⅹ',
+            'Y': 'ϒ',
+            'y': 'γ',
+            'Z': 'ζ',
+            'z': 'ʐ',
+	    ',': '¸',
+	    '.': '⋅',
+	    '!': '¡',
+	    '?': '¿',
+	    'ß': 'β',
+	    '"': '“',
+	    '(': '⁽',
+	    ')': '⁾',
+	    '/': '⁄',
+	    ':': '⁚',
+	    'Ä': 'Æ',
+	    'ä': 'æ',
+	    'Ö': 'Œ',
+	    'ö': 'œ',
+	    'Ü': 'Ű',
+	    'ü': 'ű'
+        };
+        // ─── ENDE MAPPING ─────────────────────────────────────────────────────
+
+        // DOM-Referenzen
+        const inputEl = document.getElementById('inputText');
+        const outputEl = document.getElementById('outputArea');
+
+        // Funktion: Eingabe → Ausgabe
+        function transform(text) {
+            if (!text) return '';
+            let result = '';
+            for (let i = 0; i < text.length; i++) {
+                const ch = text[i];
+                const mapped = mapping[ch];
+                result += (mapped !== undefined) ? mapped : ' ';
+            }
+            return result;
+        }
+
+        // Aktualisiert die Ausgabe
+        function updateOutput() {
+            const input = inputEl.value;
+            const output = transform(input);
+            outputEl.textContent = output;
+        }
+
+        // Event-Listener
+        inputEl.addEventListener('input', updateOutput);
+
+        // Falls das Eingabefeld schon etwas enthält (z.B. autofill)
+        updateOutput();
+
+        // Kleine Ergänzung: Wenn sich das Mapping im Code ändert,
+        // kann man mit `renderMappingPreview()` und `updateOutput()` aktualisieren.
+        // (Für Entwickler: mapping-Objekt ist im globalen Scope nicht sichtbar,
+        //  aber über die Konsole kann man es mit window.mapping = mapping; sichtbar machen)
+        // Wir machen es für die Dev-Tools verfügbar:
+        window.__mapping = mapping;
+        window.__updateOutput = updateOutput;
+    })();
+</script>
+
+</body>
+</html>
